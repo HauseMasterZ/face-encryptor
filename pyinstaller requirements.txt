@@ -1,0 +1,5 @@
+add face_recognition_models folder
+add icons both
+add opencv_vedeoio_ffmpeg480_64.dll
+add haarcascade_frontalface_default.xml
+add database folder
