@@ -1,7 +1,7 @@
 # face-encryptor
 
 <p align='center'>
-  <img src='https://github.com/HauseMasterZ/face-encryptor/assets/113833707/3ca32912-ef23-485d-bb63-9c4e96648edd' alt='Home Page' />
+  <img src='https://github.com/HauseMasterZ/face-encryptor/assets/113833707/82baa802-bac4-4603-b4f3-e682d06e47ad' alt='Home Page' />
 </p>
 
 Face Encryptor is a message encryptor that enhances the security of AES-256 encryption by incorporating additional security measures such as randomized salt and pepper, as well as a HMAC (Hash-based Message Authentication Code) salt.
