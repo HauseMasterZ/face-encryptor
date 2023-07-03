@@ -18,11 +18,9 @@ import threading
 
 
 
-def generate_key_file():
-    
+def generate_key_file():    
     key = secrets.token_bytes(32)  # Generate a 256-bit (32-byte) random key
     return key
-
 
 def pad_file(plaintext):
     block_size = algorithms.AES.block_size // 8
@@ -132,6 +130,8 @@ def encrypt_message():
     root.clipboard_clear()
     root.clipboard_append(cipher)
     output_text.configure(state="disabled")
+    encrypted_window.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'FaceEncryptor.ico'))
+
 
 
 all_faces = []
@@ -214,7 +214,6 @@ def decrypt_message():
         root.clipboard_append(decrypted_message.decode())
         output_text.configure(state="disabled")
         def loop():
-            
             output_label.after(1000, loop)
 
         def close():
@@ -224,10 +223,10 @@ def decrypt_message():
             decrypted_window.destroy()
             decrypt_button.configure(text='DECRYPT')
             decrypting = False
-
             encrypt_button.configure(text='ENCRYPT')
-
         decrypted_window.protocol("WM_DELETE_WINDOW", close)
+        decrypted_window.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'FaceEncryptor.ico'))
+
 
     decrypting = False
     
@@ -268,7 +267,6 @@ def detectFace(event = None):
     all_faces.clear()
     video_capture = cv2.VideoCapture(0)
     face_recognition_window = tk.Toplevel(root)
-
     face_recognition_window.grab_set()
     face_recognition_window.geometry(
         f"{int(root.winfo_screenwidth()/2)}x{int(root.winfo_screenheight()/1.5)}")
@@ -356,6 +354,7 @@ def detectFace(event = None):
             curr_number = 1
             try:
                 os.makedirs(new_folder)
+                
             except OSError:
                 try:
                     curr_number = int(os.path.splitext(
@@ -463,4 +462,3 @@ train_button.place(anchor=tk.CENTER, relx=0.5,
 
 # Start the main loop
 root.mainloop()
-# cv2.destroyAllWindows()
