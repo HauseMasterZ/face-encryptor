@@ -394,7 +394,7 @@ except:
 root.configure(background='#f0f0f0')
 root.geometry(f"{root.winfo_screenwidth()//4}x{root.winfo_screenheight()//2}")
 
-root.title("Message Encryption/Decryption")
+root.title("Face Encryptor ~ HauseMaster")
 
 # Create the message label and text box
 trained_label = tk.Label(
