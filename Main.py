@@ -32,6 +32,7 @@ def pad_file(plaintext):
 def unpad_file(padded_text):
     padding_size = padded_text[-1]
     return padded_text[:-padding_size]
+    
 
 
 def encrypt_file(plaintext, key):
