@@ -17,24 +17,24 @@ import os
 import threading
 
 
-
 def generate_key_file():    
     key = secrets.token_bytes(32)  # Generate a 256-bit (32-byte) random key
     return key
 
+# Generates Padding For AES CBC
 def pad_file(plaintext):
     block_size = algorithms.AES.block_size // 8
     padding_size = block_size - (len(plaintext) % block_size)
     padding = bytes([padding_size] * padding_size)
     return plaintext + padding
 
-
+# Removes Padding For AES CBC
 def unpad_file(padded_text):
     padding_size = padded_text[-1]
     return padded_text[:-padding_size]
     
 
-
+# Encrypts a filename using AES CBC
 def encrypt_file(plaintext, key):
     backend = default_backend()
     # Generate a random IV
@@ -45,7 +45,7 @@ def encrypt_file(plaintext, key):
     ciphertext = encryptor.update(padded_text) + encryptor.finalize()
     return iv + key + ciphertext
 
-
+# Decrypts a filename using AES CBC
 def decrypt_file(ciphertext):
     backend = default_backend()
     iv = ciphertext[:algorithms.AES.block_size // 8]
@@ -58,16 +58,13 @@ def decrypt_file(ciphertext):
     plaintext = unpad_file(padded_text).decode()
     return plaintext
 
-
 secretsGenerator = secrets.SystemRandom()
 
 # Generate a 32-byte key using PBKDF2 key derivation function
-
-
 def generate_key(password, name, salt=None):
     if salt is None:
         salt = secrets.token_bytes(32)
-    # Change this to your own salt value or use this if you dont care
+    # Change this to your own salt value or use this 
     hmac_salt = b"!\xb3\xc1\xa6U9{\x01'\xf4uq\x8a4c\xeb\xb6a\x18\xd4Uo\xbf\xc5\tu\x80\xf2\xee!h\xf6"
 
     kdf = PBKDF2HMAC(
@@ -93,7 +90,7 @@ def generate_key(password, name, salt=None):
 
 trained_flag = False
 
-
+# Train the face recognition model and encrypt the message
 def encrypt_message():
     if not trained_flag:
         messagebox.showwarning('Face Not Recognized',
@@ -134,13 +131,12 @@ def encrypt_message():
     encrypted_window.iconbitmap(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'FaceEncryptor.ico'))
 
 
-
+# Contains the list of all the matched faces
 all_faces = []
 
-
+# Train the face recognition model and decrypt the message
 def decrypt_message():
     global decrypting
-
 
     if not trained_flag:
         messagebox.showwarning('Face Not Recognized',
@@ -233,12 +229,12 @@ def decrypt_message():
     
     
 
-
+# Reset the fields
 def resetField():
     password_entry.delete(0, tk.END)
     message_text.delete("1.0", "end-1c")
 
-
+# Check if the face is already in the database
 def compareFaces(photo, database_folder):
     input_image = photo
     input_encoding = face_recognition.face_encodings(
@@ -263,7 +259,7 @@ def compareFaces(photo, database_folder):
     else:
         return all_faces
 
-
+# Detect the face in the video feed
 def detectFace(event = None):
     all_faces.clear()
     video_capture = cv2.VideoCapture(0)
@@ -281,9 +277,8 @@ def detectFace(event = None):
     video_label.place(anchor=tk.CENTER, relx=0.5,
                       rely=0.4, relheight=0.75, relwidth=1)
     found_label = tk.Label(face_recognition_window)
-
+    # Update the video feed
     def update_new_frame():
-
 
         ret, frame = video_capture.read()  # Read frame from the camera
         if ret:
@@ -309,8 +304,8 @@ def detectFace(event = None):
             video_label.image = photo
 
         video_label.after(30, update_new_frame)  # Call after 30ms
-    # _, user_photo = video_capture.read()
-
+    
+    # Search for the face in the database
     def trainModel():
         global user_photo, trained_flag
         # compare_face_thread.start()
@@ -331,7 +326,7 @@ def detectFace(event = None):
             name_entry_field.focus_set()
             user_photo = frame.copy()
         scan_button.configure(text='Train Model')
-
+    # Thread to search for the face in the database
     def trainModelThreadAction():
         name_entry_field.place_forget()
         found_label.place(anchor=tk.CENTER, relx=0.5, rely=0.8)
@@ -341,6 +336,7 @@ def detectFace(event = None):
         model_thread = threading.Thread(target=trainModel)
         model_thread.start()
 
+    # On closing the window
     def on_face_close(event = None):
         global user_photo, trained_flag
         if not all_faces and name_entry_field.get().strip() != '':
@@ -355,7 +351,6 @@ def detectFace(event = None):
             curr_number = 1
             try:
                 os.makedirs(new_folder)
-                
             except OSError:
                 try:
                     curr_number = int(os.path.splitext(
@@ -413,7 +408,7 @@ message_label = tk.Label(
 message_label.place(anchor=tk.W, relx=0.02, rely=0.07)
 
 
-
+# Create the password label and text box
 password_entry = tk.Entry(
     root, show="*", relief=tk.GROOVE, bd=0, font=("Roboto", 12))
 password_entry.place(anchor=tk.CENTER, relx=0.5, rely=0.46, relwidth=0.95)
@@ -421,7 +416,7 @@ password_label = tk.Label(
     root, text="Enter Passkey for Encryption/Decryption:", font=("Roboto", 10))
 password_label.place(anchor=tk.W, relx=0.02, rely=0.4)
 
-
+# Create the encrypt and decrypt buttons
 encrypt_button = tk.Button(root, text="ENCRYPT", command=encrypt_message)
 encrypt_button.configure(background='Red', foreground='White',
                          activeforeground='Gray', activebackground='#3d0d0d', relief=tk.SUNKEN, bd=0)
@@ -448,12 +443,14 @@ decrypt_button.configure(background='#1bd11b', foreground='White',
 decrypt_button.place(anchor=tk.W, relx=0.55, rely=0.72,
                      relwidth=0.4, relheight=0.1)
 
+# Create the reset button
 reset_button = tk.Button(root, text="RESET", command=resetField)
 reset_button.configure(background='#0f88f8', foreground='White',
                        activeforeground='Gray', activebackground='#151b54', relief=tk.SUNKEN, bd=0)
 reset_button.place(anchor=tk.CENTER, relx=0.5,
                    rely=0.87, relwidth=0.91, relheight=0.1)
 
+# Create the train button
 train_button = tk.Button(root, text="TRAIN MODEL", command=detectFace)
 train_button.configure(background='orange', foreground='White',
                        activeforeground='Gray', activebackground='#a16d13', relief=tk.SUNKEN, bd=0)
